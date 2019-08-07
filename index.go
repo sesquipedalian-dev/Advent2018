@@ -1,11 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"html/template"
-	"io"
 	"net/http"
-	"strconv"
 )
 
 const indexTemplateStr = `
@@ -22,21 +19,5 @@ const indexTemplateStr = `
 var indexTempl = template.Must(template.New("index").Parse(indexTemplateStr))
 
 func index(w http.ResponseWriter, req *http.Request) {
-	// init
-	sum := 0
-	scanner := bufio.NewScanner(req.Body)
-
-	// read input
-	for scanner.Scan() {
-		line := scanner.Text()
-		num, err := strconv.Atoi(line)
-		if err != nil {
-			panic("number formatting exception")
-		}
-		sum += num
-	}
-
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(http.StatusOK)
-	io.WriteString(w, strconv.Itoa(sum))
+	indexTempl.Execute(w, req.FormValue("s"))
 }
